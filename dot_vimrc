@@ -1,0 +1,65 @@
+set nocompatible              " be iMproved, required
+filetype off                  " required
+
+ filetype plugin indent on    " required
+syntax on
+filetype plugin on
+"colorscheme monokai
+"set t_Co=256
+"set guifont=Meslo\ LG\ S\ Regular\ for\ Powerline:h20
+"set guifont=Sauce\ Code\ Powerline\ Regular:h20
+set lazyredraw
+set laststatus=2
+set autoindent
+set expandtab
+set shiftwidth=4
+set softtabstop=4
+set fdm=indent
+set wrap
+set linebreak
+set relativenumber
+set number
+"setlocal spell spelllang=en_us
+"setlocal spell spelllang=de
+"set spell
+"set nospell
+let g:tex_comment_nospell= 1
+syntax spell toplevel
+set grepprg=grep\ -nH\ $*
+let g:tex_flavor='latex'
+"autocmd FileType tex let g:Tex_CompileRule_dvi = 'make'
+"autocmd FileType tex Voom latex
+let g:airline_theme='badwolf'
+"let g:airline_powerline_fonts = 1
+"let g:Powerline_symbols = 'fancy'
+let g:airline#extensions#tabline#enabled = 1
+let g:Tex_ShowErrorContext=0
+set ignorecase
+
+runtime macros/matchit.vim
+set mouse=a
+
+noremap <M-LeftMouse> <4-LeftMouse>
+inoremap <M-LeftMouse> <4-LeftMouse>
+onoremap <M-LeftMouse> <C-C><4-LeftMouse>
+noremap <M-LeftDrag> <LeftDrag>
+inoremap <M-LeftDrag> <LeftDrag>
+onoremap <M-LeftDrag> <C-C><LeftDrag>
+
+set foldlevelstart=99
+
+" for python, PEP 8. see https://realpython.com/vim-and-python-a-match-made-in-heaven/
+au BufNewFile,BufRead *.py
+    \ set tabstop=4
+    \ softtabstop=4
+    \ shiftwidth=4
+    \ textwidth=79
+    \ expandtab
+    \ autoindent
+    \ fileformat=unix
+
+"au BufRead,BufNewFile *.py,*.pyw,*.c,*.h match BadWhitespace /\s\+$/
+
+set encoding=utf-8
+
+"windo e! ++ff=unix

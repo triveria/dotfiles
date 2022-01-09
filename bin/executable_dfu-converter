@@ -1,0 +1,14 @@
+#!/usr/bin/env python3
+
+import click
+import subprocess
+
+@click.command()
+@click.argument("inp")
+@click.option("--outp", "-o")
+def main(inp, outp):
+    subprocess.Popen(["dfu-convert", "-b", f"0x08008000:{inp}", "-D", "0x6444:0x0001", f"{outp}"])
+
+
+if __name__ == "__main__":
+    main()
