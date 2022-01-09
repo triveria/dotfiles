@@ -141,3 +141,8 @@ function stopwatch(){
     sleep 0.1
    done
 }
+
+chezmoi-cd() {
+    cd $(chezmoi source-path)
+}
+
