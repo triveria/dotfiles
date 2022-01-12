@@ -1,0 +1,26 @@
+#!/usr/bin/python
+
+import sys
+import json
+
+def main(settings_filepath):
+    print(f"converting {settings_filepath}")
+    with open(settings_filepath, "r") as read_file:
+        content = json.load(read_file)
+    
+    modified_settings = {}
+    for key in content.keys():
+        value = content[key]['value']
+        modified_settings.update({key: value})
+    
+    with open(settings_filepath, "w") as write_file:
+        json.dump(modified_settings, write_file, indent=4, sort_keys=True)
+
+    old_settings_filepath = f"{settings_filepath}_old"
+    with open(old_settings_filepath, "w") as write_file:
+        json.dump(content, write_file, indent=4, sort_keys=True)
+
+
+if __name__ == '__main__':
+    settings_filepath = sys.argv[1]
+    #main(settings_filepath)

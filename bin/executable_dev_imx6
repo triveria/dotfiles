@@ -1,0 +1,5 @@
+#!/bin/bash
+
+
+stm-dfu-update --import /home/user/bin/display-imx6-developer_settings.json
+

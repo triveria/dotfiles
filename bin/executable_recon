@@ -1,0 +1,4 @@
+#!/bin/bash
+
+nmcli n off
+nmcli n on

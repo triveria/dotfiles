@@ -1,0 +1,45 @@
+#!/bin/bash
+alias latex='/usr/bin/latex'
+alias dvipng='/usr/bin/dvipng'
+alias convert='/usr/bin/convert'
+#choose a number from 75-300
+density=900
+
+if [ $# != 1 ]
+then
+    echo "Usage: $0 latex_code"
+    exit
+fi
+
+code=$1
+tempfile=latex2png_temp.tex
+
+# write latex file
+printf "\\documentclass[fleqn]{article}\n" > ${tempfile}
+printf "\\\\usepackage{amssymb,amsmath,bm}\n" >> ${tempfile}
+printf "\\\\usepackage{leftidx}\n" >> ${tempfile}
+printf "\\\\usepackage[latin1]{inputenc}\n" >> ${tempfile}
+printf "\\\\usepackage{color}\n" >> ${tempfile}
+printf "\\\\begin{document}\n" >> ${tempfile}
+printf "\\\\thispagestyle{empty}\n" >> ${tempfile}
+# printf "\\color{white}\n" >> ${tempfile}
+printf "\\color{black}\n" >> ${tempfile}
+printf "\\\\begin{align*}  \\displaystyle \\mathindent0cm \\parindent0cm \n" >> ${tempfile}
+cat "${code}" >> ${tempfile}
+printf "\\\\end{align*}\n" >> ${tempfile}
+printf "\\\\end{document}\n" >> ${tempfile}
+
+sed -i "/^\s*$/d" ${tempfile}
+
+latex -interaction=nonstopmode ${tempfile} 1>/dev/null
+# dvipng -fg 'rgb 0.99 0.99 0.99' -o ${code%.tex}.png -q -T tight -bg transparent -D $density ${tempfile%.tex}.dvi
+dvipng -o ${code%.tex}.png -q -T tight -D $density ${tempfile%.tex}.dvi 1>/dev/null
+
+dvisvgm --no-fonts -o ${code%.tex} ${tempfile%.tex}.dvi 1>/dev/null
+
+#rm -f ${tempfile%.tex}.aux ${tempfile%.tex}.dvi ${tempfile%.tex}.log ${tempfile}
+
+#preview
+display -background white -geometry +384+50 -density 300 ${code%.tex}.svg
+
+printf "Generation successful\n"

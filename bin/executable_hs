@@ -1,0 +1,10 @@
+#!/bin/bash
+
+bluetoothctl connect 50:18:09:80:BA:8B
+sleep 5
+pactl set-card-profile bluez_card.50_18_09_80_BA_8B headset_head_unit
+echo killing teams
+pkill teams
+sleep 2
+echo starting teams
+teams

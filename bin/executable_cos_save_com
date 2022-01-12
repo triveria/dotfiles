@@ -1,0 +1,5 @@
+#!/bin/bash
+
+cansend can0 601#23.10.10.02.73.61.76.65
+cansend can0 18eff753#23.10.10.02.73.61.76.65
+sleep 2

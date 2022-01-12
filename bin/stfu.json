@@ -1,0 +1,16 @@
+{
+    "Oilquick: dummycoupler tool sensor mode{Off=0,Normal,NoTool,Broken,Error}": {
+        "type": 6,
+        "count": 1,
+        "offset": 1592,
+        "readonly": false,
+        "value": 1
+    },
+    "Oilquick: dummycoupler deactivate buzzer": {
+        "type": 28,
+        "count": 1,
+        "offset": 1596,
+        "readonly": false,
+        "value": true
+    }
+}

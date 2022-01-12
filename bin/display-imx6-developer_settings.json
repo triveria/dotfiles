@@ -1,0 +1,86 @@
+{
+    "Oilquick: dummycoupler tool sensor mode{Off=0,Normal,NoTool,Broken,Error}": {
+        "type": 6,
+        "count": 1,
+        "offset": 1592,
+        "readonly": false,
+        "value": 1
+    },
+    "Oilquick: dummycoupler deactivate buzzer": {
+        "type": 28,
+        "count": 1,
+        "offset": 1596,
+        "readonly": false,
+        "value": true
+    },
+    "apps: oilquick": {
+        "type": 28,
+        "count": 1,
+        "offset": 1585,
+        "readonly": false,
+        "value": true
+    },
+    "apps: tool recognition": {
+        "type": 28,
+        "count": 1,
+        "offset": 1586,
+        "readonly": false,
+        "value": true
+    },
+    "apps: hitachi smart control": {
+        "type": 28,
+        "count": 1,
+        "offset": 1587,
+        "readonly": false,
+        "value": true
+    },
+    "apps: dynamic scale": {
+        "type": 28,
+        "count": 1,
+        "offset": 1588,
+        "readonly": false,
+        "value": true
+    },
+    "apps: 2d control": {
+        "type": 28,
+        "count": 1,
+        "offset": 1589,
+        "readonly": false,
+        "value": true
+    },
+    "apps: fencing": {
+        "type": 28,
+        "count": 1,
+        "offset": 1590,
+        "readonly": false,
+        "value": true
+    },
+    "apps: grading": {
+        "type": 28,
+        "count": 1,
+        "offset": 1591,
+        "readonly": false,
+        "value": true
+    },
+    "CAN: bus selection IMU sensors{Can1,Can2,Can3,Can4,Can5}": {
+        "type": 6,
+        "count": 1,
+        "offset": 2252,
+        "readonly": false,
+        "value": 0
+    },
+    "IMU: sensor type{LeicaLSC,VemconIMU}": {
+        "type": 6,
+        "count": 1,
+        "offset": 2936,
+        "readonly": false,
+        "value": 0
+    },
+    "IMU: sensor type{LeicaLSC,VemconProprietary,VemconJ1939}": {
+        "type": 6,
+        "count": 1,
+        "offset": 2936,
+        "readonly": false,
+        "value": 0
+    }
+}

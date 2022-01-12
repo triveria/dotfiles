@@ -1,0 +1,4 @@
+#!/bin/bash
+
+cansend can0 000#81.00
+sleep 2
