@@ -24,7 +24,8 @@ set $term konsole
 # Default wallpaper (more resolutions are available in /usr/share/backgrounds/sway/)
 # output * bg /usr/share/backgrounds/sway/Sway_Wallpaper_Blue_1920x1080.png fill
 # output * bg /home/user/Pictures/Wallpapers/alpineWoodlands.jpg fill
-output * bg "/home/user/Downloads/wallhaven-z8dg9y_1920x1080.png" fill
+#output * bg "/home/user/Downloads/wallhaven-z8dg9y_1920x1080.png" fill
+output * bg "wallpaper.png" fill
 #output * bg `random_wallpaper /home/user/Pictures/Wallpapers` fill
 
 # set $wallpapers_path $HOME/Pictures/Wallpapers
