@@ -146,3 +146,5 @@ chezmoi-cd() {
     cd $(chezmoi source-path)
 }
 
+complete -W "can create-log logs split tracetocandump" vat
+

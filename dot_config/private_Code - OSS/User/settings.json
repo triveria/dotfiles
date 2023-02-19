@@ -4,8 +4,17 @@
     "workbench.startupEditor": "none",
     "terminal.integrated.defaultProfile.linux": "zsh",
     "git.autofetch": true,
-    "window.zoomLevel": -1,
     "doxdocgen.file.versionTag": "",
     "doxdocgen.generic.authorEmail": "m.wagner@vemcon.de",
-    "doxdocgen.generic.authorName": "Michael Wagner"
+    "doxdocgen.generic.authorName": "Michael Wagner",
+    "diffEditor.ignoreTrimWhitespace": false,
+    "terminal.integrated.enableMultiLinePasteWarning": false,
+    "C/C++ Include Guard.Macro Type": "Filename",
+    "C/C++ Include Guard.Auto Update Include Guard": false,
+    "C/C++ Include Guard.Remove Extension": false,
+    "C/C++ Include Guard.Suffix": "_",
+    "cSpell.language": "en,de-DE",
+    "merge-conflict.autoNavigateNextConflict.enabled": true,
+    "latex-workshop.latex.autoBuild.run": "never",
+    "window.zoomLevel": -1
 }

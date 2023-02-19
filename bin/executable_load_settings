@@ -1,0 +1,20 @@
+#!/bin/bash
+
+
+SETTINGS=$1
+
+stm-dfu-update --name rtm-1 --import "$SETTINGS"
+sleep 3
+
+reboot_rtm
+sleep 3
+
+stm-dfu-update --name rtm-1 --import "$SETTINGS"
+sleep 3
+
+initiate_lsc
+sleep 0.5
+initiate_lsc
+sleep 0.5
+initiate_lsc
+sleep 0.5

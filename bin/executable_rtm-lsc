@@ -1,0 +1,49 @@
+#!/bin/bash
+
+echo "Kill GUI"
+pkill gui
+sleep 1
+
+SETTINGS="/home/user/Arbeit/Vemcon/Messungen/Haar/hitachi_zx210_vernetzte_maschine/settings/2022-09-13-Hitachi-ZX210-LSC.json"
+
+# echo "import settings of Hitachi ZX 210"
+# # stm-dfu-update --name rtm-1 --import "/home/user/Arbeit/Vemcon/Messungen/Haar/hitachi_zx210_vernetzte_maschine/settings/2022.01.21 - original zx210 settings.json"
+# stm-dfu-update --name rtm-1 --import "/home/user/Arbeit/Vemcon/Messungen/Haar/hitachi_zx210_vernetzte_maschine/settings/2022.05.19 - modified zx210 settings.json"
+# sleep 3
+#
+# stm-dfu-update --name rtm-1 --import "/home/user/Arbeit/Vemcon/Messungen/Haar/hitachi_zx210_vernetzte_maschine/settings/set_excavator_type.json"
+# sleep 3
+#
+# echo
+# echo "Set sensor chain to LSC"
+# stm-dfu-update --name rtm-1 --import "/home/user/Arbeit/Vemcon/Messungen/general_settings/set_sensor_chain_to_LSC.json"
+# sleep 3
+#
+# echo
+# echo "deactivate CDF"
+# stm-dfu-update --name rtm-1 --import "/home/user/Arbeit/Vemcon/Messungen/general_settings/CDF_off.json"
+# sleep 3
+#
+# echo
+# echo "Reconfigure CAN for office setup"
+# stm-dfu-update --name rtm-1 --import "/home/user/Arbeit/Vemcon/Messungen/general_settings/rtm-office.json"
+# sleep 3
+
+echo
+echo "Setup Hitachi ZX 210 in LSC mode"
+stm-dfu-update --name rtm-1 --import $SETTINGS
+sleep 3
+
+echo
+echo "Reboot RTM"
+reboot_rtm
+sleep 3
+
+echo
+echo "Setup Hitachi ZX 210 in LSC mode again"
+stm-dfu-update --name rtm-1 --import $SETTINGS
+sleep 3
+
+initiate_lsc
+initiate_lsc
+initiate_lsc

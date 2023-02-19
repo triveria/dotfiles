@@ -1,0 +1,40 @@
+#!/usr/bin/env python3
+
+import click
+import subprocess
+import time
+from pathlib import Path
+
+
+@click.command()
+@click.option('--chain', type=click.Choice(['VSC', 'CDF', 'LSC'], case_sensitive=False))
+def main(chain):
+    print(f"Setting sensor chain to {chain}")
+
+    match chain.upper():
+        case "VSC":
+            filename = "set_sensor_chain_to_VSC_V02.json"
+        case "CDF":
+            filename = "set_sensor_chain_to_CDF.json"
+        case "LSC":
+            filename = "set_sensor_chain_to_LSC.json"
+        case _:
+            raise ValueError(f"No such sensor chain named '{chain}'")
+
+    filepath = Path("/home/user/Arbeit/Vemcon/Messungen/general_settings/") / filename
+    sensor_chain_cmd = ["stm-dfu-update", "--name", "rtm-1", "--import", filepath]
+
+    subprocess.run(sensor_chain_cmd)
+    time.sleep(3)
+
+    subprocess.run(["reboot_rtm"])
+    time.sleep(3)
+
+    if chain.upper() == "LSC":
+        subprocess.run(["initiate_lsc"])
+        subprocess.run(["initiate_lsc"])
+        subprocess.run(["initiate_lsc"])
+
+
+if __name__ in ['__main__', '__console__']:
+    main()

@@ -1,0 +1,88 @@
+#!/usr/bin/env python3
+
+import matplotlib.pyplot as plt
+import pandas as pd
+import numpy as np
+import click
+
+
+def add_subplot(d, entries, num_subplots, subplot_id, ax, title=None, ylim=None, ylabel=None):
+    ax = plt.subplot(num_subplots, 1, subplot_id, sharex=ax)
+    if title is not None:
+        plt.title(title)
+
+    for entry in entries:
+        plt.plot(d.time, d[entry], label=entry)
+    plt.grid()
+    plt.legend()
+
+    if ylim is not None:
+        plt.ylim(ylim)
+
+    if ylabel is not None:
+        plt.ylabel(ylabel)
+
+    return ax
+
+
+def plot_angles(d, title):
+    ax = None
+    fig = plt.figure(title)
+
+    num_subplots = 5
+    #ax = add_subplot(d, ['lsc_cabin_pitch_angle', 'vsc_cabin_pitch_angle'], num_subplots, 1, ax, title=title, ylabel="Winkel [deg]")
+    #ax = add_subplot(d, ['cabin_pitch_angle_error'], num_subplots, 2, ax, ylabel="Winkelfehler [deg]")
+
+    ax = add_subplot(d, ['lsc_boom_angle', 'vsc_boom_angle'], num_subplots, 1, ax, ylabel="Winkel [deg]")
+    # ax = add_subplot(d, ['boom_angle_error'], num_subplots, 2, ax, ylabel="Winkelfehler [deg]")
+    ax = add_subplot(d, ['lsc_boom_dtheta'], num_subplots, 2, ax, ylabel="Winkelfehler [deg]")
+
+    ax = add_subplot(d, ['lsc_stick_angle', 'vsc_stick_angle', 'vsc_stick_angle_reconstruced'], num_subplots, 3, ax, ylabel="Winkel [deg]")
+    #ax = add_subplot(d, ['stick_angle_error'], num_subplots, 4, ax, ylabel="Winkelfehler [deg]")
+    ax = add_subplot(d, ['lsc_stick_dtheta', 'vsc_stick_angvel'], num_subplots, 4, ax, ylabel="Wingeklgeschw [deg/s]")
+    #ax = add_subplot(d, ['lsc_stick_dtheta'], num_subplots, 4, ax, ylabel="Winkelfehler [deg]")
+
+    #ax = add_subplot(d, ['lsc_tool_angle', 'vsc_tool_angle'], num_subplots, 7, ax, ylabel="Winkel [deg]")
+    #ax = add_subplot(d, ['tool_angle_error'], num_subplots, 8, ax, ylabel="Winkelfehler [deg]")
+
+    #ax = add_subplot(d, ['lsc_stick_dtheta'], num_subplots, 5, ax, ylabel="Winkelgeschw [deg/s]")
+
+    ax = add_subplot(d, ['lsc_yaw_angvel'], num_subplots, 5, ax, ylabel="Oberwagendrehgeschwindigket [deg/s]")
+
+    plt.xlabel("time [s]")
+
+    plt.show()
+
+
+@click.command()
+@click.argument("zip_log_name")
+@click.option("--title")
+def main(zip_log_name, title):
+    d = pd.read_csv(zip_log_name)
+
+    #d.lsc_boom_angle -= d.lsc_boom_angle[0]
+    #d.lsc_stick_angle -= d.lsc_stick_angle[0]
+    #d.lsc_tool_angle -= d.lsc_tool_angle[0]
+
+    #d.vsc_theta_2 -= d.vsc_theta_2[0]
+    #d.vsc_theta_1 -= d.vsc_theta_1[0]
+    #d.vsc_theta_3 -= d.vsc_theta_3[0]
+
+    d['cabin_pitch_angle_error'] = d.lsc_cabin_pitch_angle - d.vsc_cabin_pitch_angle
+    d['boom_angle_error'] = d.lsc_boom_angle - d.vsc_boom_angle
+    d['stick_angle_error'] = d.lsc_stick_angle - d.vsc_stick_angle
+    d['tool_angle_error'] = d.lsc_tool_angle - d.vsc_tool_angle
+
+    #ref.:
+    dt = np.diff(d.time)
+    d['dt'] = np.append(dt, [np.nan])
+    d['vsc_stick_angle_reconstruced'] = np.cumsum(d.vsc_stick_angvel * d.dt)
+
+    if title == None:
+        title = zip_log_name
+
+    plot_angles(d, title)
+
+
+if __name__ in ['__main__', '__console__']:
+    main()

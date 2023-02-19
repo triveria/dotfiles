@@ -1,5 +1,5 @@
 #!/bin/bash
 
 
-stm-dfu-update --import /home/user/bin/reboot_rtm.json
+stm-dfu-update --name "rtm-1" --import /home/user/bin/reboot_rtm.json
 

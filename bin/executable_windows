@@ -3,5 +3,5 @@
 # add this line to sudoers file:
 # user ALL=(ALL) NOPASSWD: /usr/bin/efibootmgr -n 0005
 
-sudo efibootmgr -n 0005
+sudo efibootmgr -n 000B
 reboot

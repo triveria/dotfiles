@@ -1,0 +1,175 @@
+#!/usr/bin/env python3
+
+
+import pandas as pd
+import numpy as np
+import struct
+import click
+
+
+def get_uint16(CAN_msg, relevant_bytes):
+    """
+    relevant_bytes: list of bytes, start counting at 0
+    """
+    (idx_low, idx_high) = relevant_bytes
+    str_low = CAN_msg[(2*idx_low):(2*idx_low+2)]
+    str_high = CAN_msg[(2*idx_high):(2*idx_high+2)]
+    low_byte = int(str_low, 16)
+    high_byte = int(str_high, 16)
+    all_bytes = bytes([low_byte, high_byte])
+    j1939_value = struct.unpack("<H", all_bytes)[0]
+    return j1939_value
+
+
+def get_lsc_angvel(CAN_msg):
+    ANVEL_SCALE = 64
+    ANVEL_OFFSET = 500
+    gyro_j1939 = get_uint16(CAN_msg, [3, 4]) #[6:8], CAN_msg[8:10])
+    gyro = (gyro_j1939 / ANVEL_SCALE) - ANVEL_OFFSET
+    return gyro
+
+
+def get_lsc_angle(CAN_msg):
+    ANGLE_SCALE = 128
+    ANGLE_OFFSET = 200
+    angle_j1939 = get_uint16(CAN_msg, [1, 2]) #[2:4], CAN_msg[4:6])
+    angle = (angle_j1939 / ANGLE_SCALE) - ANGLE_OFFSET
+    return angle
+
+
+def get_vsc_angle(CAN_msg):
+    ANGLE_SCALE = 0.01
+    ANGLE_OFFSET = -180
+    angle_j1939 = get_uint16(CAN_msg, [0, 1]) #[0:2], CAN_msg[2:4]) # 0xABCD
+    angle = (angle_j1939 * ANGLE_SCALE) + ANGLE_OFFSET
+    angle *= -1
+    return angle
+
+
+def get_vsc_angvel(CAN_msg):
+    ANGVEL_SCALE = 0.05
+    ANGVEL_OFFSET = -1000
+    #angvel_j1939 = get_uint16(CAN_msg, [4, 5]) # angle_z, gyro_z_filtered, gyro_z_raw, 0xffff
+    angvel_j1939 = get_uint16(CAN_msg, [6, 7]) # angle_z, gyro_x_raw, gyro_y_raw, gyro_z_raw
+    angvel = (angvel_j1939 * ANGVEL_SCALE) + ANGVEL_OFFSET
+    angvel *= -1
+    return angvel
+
+
+def get_vsc_acc_x(CAN_msg):
+    ACC_SCALE = 0.005
+    ACC_OFFSET = -100
+    acc_j1939 = get_uint16(CAN_msg, [0, 1])
+    acc = (acc_j1939 * ACC_SCALE) + ACC_OFFSET
+    return acc
+
+
+def get_vsc_acc_y(CAN_msg):
+    ACC_SCALE = 0.005
+    ACC_OFFSET = -100
+    acc_j1939 = get_uint16(CAN_msg, [2, 3])
+    acc = (acc_j1939 * ACC_SCALE) + ACC_OFFSET
+    return acc
+
+
+def get_vsc_acc_z(CAN_msg):
+    ACC_SCALE = 0.005
+    ACC_OFFSET = -100
+    acc_j1939 = get_uint16(CAN_msg, [4, 5])
+    acc = (acc_j1939 * ACC_SCALE) + ACC_OFFSET
+    return acc
+
+
+def generate_column(row, CAN_ID, conversion_function):
+    current_msg = row['ID#payload']
+    if current_msg.startswith(CAN_ID):
+        CAN_msg = current_msg[9:]
+        value = conversion_function(CAN_msg)
+        return value
+    else:
+        return np.nan
+
+
+def read_time(row):
+    time_str = row.time
+    time_float = float(time_str.lstrip('(').rstrip(')'))
+    return time_float
+
+
+def wrap2pi(angle_in):
+    angle_out = np.mod(angle_in+180, 360) - 180
+    return angle_out
+
+
+#####################################################
+
+@click.command()
+@click.argument("log_filename")
+def main(log_filename):
+    csv_zip_filename = log_filename.rstrip(".log") + ".csv.zip"
+
+    names = ["time", "device", "ID#payload"]
+    dtypes = {'time': str, 'device': str, 'ID#payload': str}
+
+    d = pd.read_csv(log_filename, low_memory=False, header=None, delim_whitespace=True, names=names, dtype=dtypes)
+    d['time'] = d.apply(read_time, axis=1)
+
+    d.time -= d.time[0]
+
+    lsc_cabin_roll_id  = "0CFFF447"
+    lsc_cabin_pitch_id = "0CFFF547"
+    lsc_cabin_yaw_id   = "0CFFF247"
+    lsc_boom_id        = "0CFFF647"
+    lsc_boomopt_id     = "0CFFF747"
+    lsc_stick_id       = "0CFFF847"
+    lsc_tool_id        = "0CFFF647"
+
+    vsc_cabin_pitch_id     = "0CFFE584"
+    vsc_cabin_yaw_id       = "0CFFE484"
+    vsc_boom_id            = "0CFFE588"
+    vsc_boomopt_id         = "0CFFE58A"
+    vsc_stick_id           = "0CFFE58C"
+    vsc_stick_acc_id       = "0CFFE68C"
+    vsc_stick_distr_acc_id = "0CFFE78C"
+    vsc_tool_id            = "0CFFE58E"
+
+    d['lsc_cabin_pitch_angle']  = -d.apply(generate_column, axis=1, args=(lsc_cabin_pitch_id, get_lsc_angle)).ffill().bfill()
+    d['lsc_cabin_pitch_angvel'] = -d.apply(generate_column, axis=1, args=(lsc_cabin_pitch_id, get_lsc_angvel)).fillna(0)
+    d['lsc_cabin_roll_angle']   = -d.apply(generate_column, axis=1, args=(lsc_cabin_roll_id, get_lsc_angle)).ffill().bfill()
+    d['lsc_cabin_roll_angvel']  = -d.apply(generate_column, axis=1, args=(lsc_cabin_roll_id, get_lsc_angvel)).fillna(0)
+    d['lsc_yaw_angvel']         = -d.apply(generate_column, axis=1, args=(lsc_cabin_yaw_id, get_lsc_angvel)).fillna(0)
+    d['lsc_boom_theta']         = -d.apply(generate_column, axis=1, args=(lsc_boom_id, get_lsc_angle )).ffill().bfill()
+    d['lsc_boom_dtheta']        = -d.apply(generate_column, axis=1, args=(lsc_boom_id, get_lsc_angvel)).fillna(0)
+    d['lsc_stick_theta']        = -d.apply(generate_column, axis=1, args=(lsc_stick_id, get_lsc_angle)).ffill().bfill()
+    d['lsc_stick_dtheta']       = -d.apply(generate_column, axis=1, args=(lsc_stick_id, get_lsc_angvel)).ffill().bfill()
+    d['lsc_tool_theta']         = -d.apply(generate_column, axis=1, args=(lsc_tool_id, get_lsc_angle )).ffill().bfill()
+    d['lsc_tool_dtheta']        = -d.apply(generate_column, axis=1, args=(lsc_tool_id, get_lsc_angvel )).fillna(0)
+
+    d['vsc_cabin_pitch_angle'] = -d.apply(generate_column, axis=1, args=(vsc_cabin_pitch_id, get_vsc_angle)).ffill().bfill() + -90.400
+    d['vsc_cabin_yaw_angvel']  = -d.apply(generate_column, axis=1, args=(vsc_cabin_yaw_id, get_vsc_angvel)).ffill().bfill()
+    d['vsc_boom_angle']        = -d.apply(generate_column, axis=1, args=(vsc_boom_id, get_vsc_angle       )).ffill().bfill() + -55.414
+    d['vsc_stick_angle']       = -d.apply(generate_column, axis=1, args=(vsc_stick_id, get_vsc_angle      )).ffill().bfill() + 80.905
+    d['vsc_stick_angvel']      = -d.apply(generate_column, axis=1, args=(vsc_stick_id, get_vsc_angvel      )).ffill().bfill()
+    d['vsc_tool_angle']        = -d.apply(generate_column, axis=1, args=(vsc_tool_id, get_vsc_angle       )).ffill().bfill() + 3.254 # = "IMU: bucket angle"
+
+
+    d['vsc_stick_acc_x']       = d.apply(generate_column, axis=1, args=(vsc_stick_acc_id, get_vsc_acc_x)).ffill().bfill()
+    d['vsc_stick_acc_y']       = d.apply(generate_column, axis=1, args=(vsc_stick_acc_id, get_vsc_acc_y)).ffill().bfill()
+    d['vsc_stick_acc_z']       = d.apply(generate_column, axis=1, args=(vsc_stick_acc_id, get_vsc_acc_z)).ffill().bfill()
+
+    d['lsc_boom_angle']        = d.lsc_cabin_pitch_angle + d.lsc_boom_theta
+    d['lsc_stick_angle']       = d.lsc_boom_angle + d.lsc_stick_theta
+    d['lsc_tool_angle']        = d.lsc_stick_angle + d.lsc_tool_theta
+
+
+    d['vsc_theta_1'] = -(d.vsc_boom_angle - d.vsc_cabin_pitch_angle)
+    d['vsc_theta_2'] = -(d.vsc_stick_angle - d.vsc_boom_angle)
+    d['vsc_theta_3'] = -(d.vsc_tool_angle - d.vsc_stick_angle) # = "dyn load est: state vect [12]"
+
+    #d.vsc_theta_3 = d.vsc_theta_3.apply(wrap2pi)
+
+    d.to_csv(csv_zip_filename, compression="zip")
+
+
+if __name__ in ['__main__', '__console__']:
+    main()

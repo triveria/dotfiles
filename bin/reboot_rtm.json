@@ -1,9 +1,3 @@
 {
-    "reboot": {
-        "type": 6,
-        "count": 1,
-        "offset": 1592,
-        "readonly": false,
-        "value": true
-    }
+    "reboot": true
 }

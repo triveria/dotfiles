@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+nmcli connection modify wer_das_liest_ist_doof connection.metered yes
+nmcli -t -m multiline -f connection.metered connection show wer_das_liest_ist_doof
+

@@ -1,0 +1,4 @@
+#!/bin/bash
+
+cansend can0 0cffa347#13.37.42
+

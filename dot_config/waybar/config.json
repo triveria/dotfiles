@@ -40,8 +40,8 @@
         "spacing": 10
     },
     "clock": {
-        "tooltip-format": "{:%Y-%m-%d | %H:%M}",
-        "format-alt": "{:%Y-%m-%d}"
+        "tooltip-format": "{:%Y-%m-%d - %H:%M}",
+        "format-alt": "{:%Y-%m-%d - %H:%M}"
     },
     "backlight": {
         // "device": "acpi_video1",

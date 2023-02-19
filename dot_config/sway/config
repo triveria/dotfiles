@@ -12,7 +12,7 @@ set $mod Mod4
 set $left h
 set $down j
 set $up k
-set $right l
+#set $right l
 # Your preferred terminal emulator
 set $term konsole
 # Your preferred application launcher
@@ -40,8 +40,13 @@ output * bg "wallpaper.png" fill
 # output DP-1 position 0,0
 
 # This monitor
-output 'Unknown 0x23ED 0x00000000' resolution 1920x1080 position 0,1080 
-output 'Unknown 0x062E 0x00000000' resolution 1920x1080 position 0,1080 
+#output 'Unknown 0x23ED 0x00000000' resolution 1920x1080 position 0,1080 
+# 2nd Monitor to the top
+#output 'Unknown 0x062E 0x00000000' resolution 1920x1080 position 0,1080 
+output 'eDP-1' resolution 1920x1080 position 0,1080 
+
+# 2nd Monitor to the left
+#output 'Unknown 0x062E 0x00000000' resolution 1920x1080 position 1920,0
 
 # Vemcon monitor at home
 output 'BenQ Corporation BenQ GL2450H 24F03939019' position 0,0
@@ -74,13 +79,19 @@ output 'Dell Inc. DELL P2419H C2DRH73' position 0,0
 output 'BenQ Corporation BenQ GL2450H L4H01330019' position 0,0
 
 # my monitor at Vemcon office
-output 'Dell Inc. DELL P2419H 41BRH73' position 0,0
-# my monitor at Vemcon office
+output 'Dell Inc. DELL P2419H 41BRH73' position -1920,1080
 
+# my monitor at Vemcon office
 output 'Dell Inc. DELL P2419H FQCRH73' position 0,0
 
+# my monitor at Vemcon office, Tims ehemaliger Platz
+output 'Dell Inc. DELL P2422H 9X7V8L3' position 0,0
+
+# Monitor in Christophs office
+output 'Dell Inc. DELL P2419H 9GRYHC3' position 0,0
+
 # my monitor at Vemcon office
-#output HDMI-A-1 position 0,0
+output HDMI-A-1 position 0,0
 
 # monitor at Baumer
 output 'Philips Consumer Electronics Company PHL 241B7Q UHB1752008868' position 0,0
@@ -133,11 +144,11 @@ output 'Philips Consumer Electronics Company Philips FTV 0x00000101' resolution 
 #
 # Example configuration:
 #
-input "2:7:SynPS/2_Synaptics_TouchPad" {
+input "1739:52716:SYNA30A6:00_06CB:CDEC_Touchpad" {
     dwt enabled
-    natural_scroll disabled
+    natural_scroll enabled
     middle_emulation disabled
-    pointer_accel 0.8 
+#    pointer_accel 0.8 
 }
 #
 # You can get the names of your inputs by running: swaymsg -t get_inputs
@@ -175,7 +186,7 @@ input "2:7:SynPS/2_Synaptics_TouchPad" {
     bindsym $mod+$left focus left
     bindsym $mod+$down focus down
     bindsym $mod+$up focus up
-    bindsym $mod+$right focus right
+    #bindsym $mod+$right focus right
     # or use $mod+[up|down|left|right]
     bindsym $mod+Left focus left
     bindsym $mod+Down focus down
@@ -186,7 +197,7 @@ input "2:7:SynPS/2_Synaptics_TouchPad" {
     bindsym $mod+Shift+$left move left
     bindsym $mod+Shift+$down move down
     bindsym $mod+Shift+$up move up
-    bindsym $mod+Shift+$right move right
+    #bindsym $mod+Shift+$right move right
     # ditto, with arrow keys
     bindsym $mod+Shift+Left move left
     bindsym $mod+Shift+Down move down
@@ -267,7 +278,7 @@ mode "resize" {
     bindsym $left resize shrink width 10px
     bindsym $down resize grow height 10px
     bindsym $up resize shrink height 10px
-    bindsym $right resize grow width 10px
+    #bindsym $right resize grow width 10px
 
     # ditto, with arrow keys
     bindsym Left resize shrink width 10px
@@ -307,15 +318,21 @@ bar {
 # Michis additions
 bindsym Mod1+P exec screenshot # https://www.reddit.com/r/swaywm/comments/bb4dam/take_screenshot_to_clipboard/
 #bindsym F2 exec export MOZ_ENABLE_WAYLAND=1 && /usr/bin/firefox # enable wayland support in firefox
-bindsym F2 exec /usr/bin/firefox # enable wayland support in firefox
+bindsym F2 exec MOZ_ENABLE_WAYLAND=1 /usr/bin/firefox # enable wayland support in firefox
+#bindsym F2 exec /usr/bin/firefox # enable wayland support in firefox
 bindsym F4 exec /usr/bin/konsole
 bindsym F6 exec XDG_CURRENT_DESKTOP=kde /usr/bin/dolphin # ref.: https://forum.kde.org/viewtopic.php?f=224&t=128749
 #bindsym F6 exec /usr/bin/thunar
-bindsym F7 exec /usr/bin/keepassxc
+#bindsym F7 exec /usr/bin/keepassxc
+bindsym F7 exec /usr/bin/bitwarden-desktop
 bindsym F8 exec /usr/bin/kate
-bindsym F9 exec /usr/bin/zim
+#bindsym F9 exec /usr/bin/zim
+#bindsym F9 exec XDG_SESSION_TYPE=wayland DESKTOP_SESSION=sway WAYLAND_DISPLAY=wayland-1 GDK_BACKEND=x11 QT_LINUX_ACCESSIBILITY_ALWAYS_ON=1 XDG_CURRENT_DESKTOP=kde /usr/bin/cherrytree
+bindsym F9 exec GDK_BACKEND=x11 /usr/bin/cherrytree
 bindsym F10 exec "/usr/bin/code --enable-features=UseOzonePlatform --ozone-platform=wayland"
 bindsym Mod1+F4 kill
+set $lock "swaylock -f -i '/home/user/Pictures/Kinderdijk.jpg'"
+bindsym $mod+L exec $lock
 
 input * xkb_layout "de"
 input * xkb_variant "nodeadkeys"
@@ -341,17 +358,23 @@ bindsym Mod1+F2 exec zsh -c  "krunner"
 bindsym Mod1+d exec zsh -c "rofi -run-list-command '. ~/.profile' -run-command '/usr/bin/zsh -i -c \"{cmd}\"' -show run"
 # bindsym Mod1+F2 exec zsh -c "rofi -show drun -font \\"DejaVu 9\\" -run-shell-command '{terminal} -e \\" {cmd}; read -n 1 -s\\"'"
 # bindsym Mod1+F2 exec --no-startup-id "rofi -show drun -run-shell-command '{terminal} -e \\" {cmd}; read -n 1 -s\\"'"
-seat * hide_cursor 5000
+# seat * hide_cursor 5000 # hide mouse after 5 seconds
 #export MOZ_ENABLE_WAYLAND=1
 
 exec systemctl --user import-environment DISPLAY WAYLAND_DISPLAY SWAYSOCK
-exec hash dbus-update-activation-environment 2>/dev/null && dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY SWAYSOCK
+#exec hash dbus-update-activation-environment 2>/dev/null && dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY SWAYSOCK
 
 exec gammastep-indicator &
 
-exec swayidle -w \
-	resume 'swaymsg "output * dpms on"' \
-        before-sleep 'swaylock'
+#font pango:SourceCodePro Medium 11
+font pango:DejaVuSansMono Book 11
+
+# exec swayidle -w resume 'swaymsg "output * dpms on"'
+#exec swayidle -w before-sleep 'swaylock -f -c 000000'
+
+# ref.: https://www.reddit.com/r/swaywm/comments/mlrm0e/only_lock_screen_when_lid_closed/
+#set $lock 'swaylock -f -c 000000'
+bindswitch --reload --locked lid:on exec $lock
 
 ######################################
 include /etc/sway/config.d/*
