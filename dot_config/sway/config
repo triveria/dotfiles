@@ -376,5 +376,12 @@ font pango:DejaVuSansMono Book 11
 #set $lock 'swaylock -f -c 000000'
 bindswitch --reload --locked lid:on exec $lock
 
+
+# move workspace to another monitor, ref.: https://www.reddit.com/r/swaywm/comments/hd9r4e/how_to_move_workspace_to_another_window/
+bindsym $mod+Control+Shift+Right move workspace to output right
+bindsym $mod+Control+Shift+Left move workspace to output left
+bindsym $mod+Control+Shift+Down move workspace to output down
+bindsym $mod+Control+Shift+Up move workspace to output up
+
 ######################################
 include /etc/sway/config.d/*

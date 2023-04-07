@@ -148,3 +148,27 @@ chezmoi-cd() {
 
 complete -W "can create-log logs split tracetocandump" vat
 
+_vat_completions_04()
+{
+    local cur prev opts base
+    COMPREPLY=()
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+    subcmd="${COMP_WORDS[1]}"
+    opts="cansniff candump2datalog candump2trace logs split trace2candump"
+
+    case "${subcmd}" in
+        cansniff | candump2datalog | candump2trace | logs | split | trace2candump)
+#             local names=$(for x in `ls -1`; do echo "${x}" ; done )
+            local names=$(for x in *; do echo "${x}" ; done )
+            COMPREPLY=( $(compgen -W "${names}" -- ${cur}) )
+            return 0
+            ;;
+        *) # default case
+        ;;
+    esac
+
+   COMPREPLY=($(compgen -W "${opts}" -- ${cur}))
+   return 0
+}
+complete -F _vat_completions_04 vat

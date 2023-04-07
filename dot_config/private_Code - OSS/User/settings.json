@@ -16,5 +16,9 @@
     "cSpell.language": "en,de-DE",
     "merge-conflict.autoNavigateNextConflict.enabled": true,
     "latex-workshop.latex.autoBuild.run": "never",
-    "window.zoomLevel": -1
+    "gitlens.blame.separateLines": false,
+    "window.zoomLevel": -1,
+    "genieai.enableConversationHistory": true,
+    "genieai.response.showNotification": true,
+    "genieai.openai.temperature": 0
 }
